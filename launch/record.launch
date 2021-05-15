@@ -1,0 +1,6 @@
+<launch>
+    <arg name="config" default="$(find ocean_ros)/config/config.ini" />
+    <node pkg="bag_record" type="record.py" name="rosbag_recorder" output="screen">
+        <param name="config" value="$(arg config)" />
+    </node>
+</launch>
