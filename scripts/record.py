@@ -30,7 +30,7 @@ class BagRecorder():
         print(inf)
         date = time.strftime('%x')
         date = date.split('/')
-        self.command = ['rosbag', 'record', f'--output-name=/home/spot/rosbags/lesson_one_{date[0]}_{date[1]}_{date[2]}']
+        self.command = ['rosbag', 'record', f'--output-name=/home/spot/rosbags/lesson_one_{date[0]}_{date[1]}_{date[2]}_{time.time()}']
         self.topics_str = ''
         types_name = []
         topic = False
@@ -62,6 +62,9 @@ class BagRecorder():
 
     def record(self):
         rospy.loginfo('Starting recorging')
+        date = time.strftime('%x')
+        date = date.split('/')
+        self.command = ['rosbag', 'record', f'--output-name=/home/spot/rosbags/lesson_one_{date[0]}_{date[1]}_{date[2]}_{time.time()}', '/tf', '/tf_static']
         rosbag_proc = subprocess.Popen(self.command)
         power_on = True
         while power_on:
