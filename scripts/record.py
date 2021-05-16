@@ -32,24 +32,24 @@ class BagRecorder():
         date = time.strftime('%x')
         date = date.split('/')
         file_name_full = f'/home/spot/rosbags/lesson_one_full_{date[0]}_{date[1]}_{date[2]}_{time.time()}'
-        self.command_full = ['rosbag', 'record', f'--output-name={file_name_full}']
-        self.topics_str = ''
-        types_name = []
-        topic = False
-        for p in inf:
-            p = p.strip()
-            if topic:
-                if p[0] == '/':
-                    self.command_full.append(p)
-                    self.topics_str += f'{p} ' 
-                # if p[0] == '[':
-                #     types_name.append(p.split('/')[-1][:-1])
-            if p == "Subscriptions:":
-                topic = True
-            if p == "Services:":
-                topic = False
-        print(self.command_full)
-        print(types)
+        self.command_full = ['rosbag', 'record', f'--output-name={file_name_full}', '/spot/depth/back/camera_info', '/spot/depth/back/image', '/spot/depth/frontleft/camera_info', '/spot/depth/frontleft/image', '/spot/depth/frontright/camera_info', '/spot/depth/frontright/image', '/spot/depth/left/camera_info', '/spot/depth/left/image', '/spot/depth/right/camera_info', '/spot/depth/right/image', '/tf', '/tf_static', '/twist_marker_server/update']
+        # self.topics_str = ''
+        # types_name = []
+        # topic = False
+        # for p in inf:
+        #     p = p.strip()
+        #     if topic:
+        #         if p[0] == '/':
+        #             self.command_full.append(p)
+        #             self.topics_str += f'{p} ' 
+        #         # if p[0] == '[':
+        #         #     types_name.append(p.split('/')[-1][:-1])
+        #     if p == "Subscriptions:":
+        #         topic = True
+        #     if p == "Services:":
+        #         topic = False
+        # print(self.command_full)
+        # print(types)
         self.recording = False
         i = 0
         self.bag = None
