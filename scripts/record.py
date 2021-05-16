@@ -82,7 +82,8 @@ class BagRecorder():
         rosbag_proc.terminate()
         rosbag_proc_full.terminate()
         rospy.loginfo('Finished recording')
-        res = self.pinata.pin_file_to_ipfs(file_name)
+        time.sleep(2)
+        res = self.pinata.pin_file_to_ipfs(f'{file_name}.bag'')
         rospy.loginfo(f"Published to IPFS with hash: {res['IpfsHash']}")
         
     def spin(self):
