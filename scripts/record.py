@@ -15,9 +15,10 @@ class BagRecorder():
     def __init__(self):
         types = {'CameraInfo': CameraInfo, 'Image': Image, 'TFMessage': TFMessage, 'InteractiveMarkerUpdate': InteractiveMarkerUpdate}
         rospy.init_node(f"rosbag_recorder", anonymous=False)
+        config_path = rospy.get_param("~config")
+        print(config_path)
         sdk = bosdyn.client.create_standard_sdk('understanding-spot')
         self.robot = sdk.create_robot('192.168.50.3')
-        config_path = rospy.get_param("~config")
         with open(config_path) as f:
             for line in f:
                 line = line.split('/')
@@ -30,7 +31,8 @@ class BagRecorder():
         print(inf)
         date = time.strftime('%x')
         date = date.split('/')
-        self.command = ['rosbag', 'record', f'--output-name=/home/spot/rosbags/lesson_one_{date[0]}_{date[1]}_{date[2]}_{time.time()}']
+        file_name_full = f'/home/spot/rosbags/lesson_one_full_{date[0]}_{date[1]}_{date[2]}_{time.time()}'
+        self.command_full = ['rosbag', 'record', f'--output-name={file_name_full}']
         self.topics_str = ''
         types_name = []
         topic = False
@@ -38,7 +40,7 @@ class BagRecorder():
             p = p.strip()
             if topic:
                 if p[0] == '/':
-                    self.command.append(p)
+                    self.command_full.append(p)
                     self.topics_str += f'{p} ' 
                 # if p[0] == '[':
                 #     types_name.append(p.split('/')[-1][:-1])
@@ -46,7 +48,7 @@ class BagRecorder():
                 topic = True
             if p == "Services:":
                 topic = False
-        print(self.command)
+        print(self.command_full)
         print(types)
         self.recording = False
         i = 0
@@ -64,14 +66,17 @@ class BagRecorder():
         rospy.loginfo('Starting recorging')
         date = time.strftime('%x')
         date = date.split('/')
-        self.command = ['rosbag', 'record', f'--output-name=/home/spot/rosbags/lesson_one_{date[0]}_{date[1]}_{date[2]}_{time.time()}', '/tf', '/tf_static']
+        file_name = f'/home/spot/rosbags/lesson_one_{date[0]}_{date[1]}_{date[2]}_{time.time()}'
+        self.command = ['rosbag', 'record', f'--output-name={file_name}', '/tf', '/tf_static']
         rosbag_proc = subprocess.Popen(self.command)
+        rosbag_proc_full = subprocess.Popen(self.command_full)
         power_on = True
         while power_on:
             power_on = self.robot.is_powered_on()
             time.sleep(1)
             #power_on = False
         rosbag_proc.terminate()
+        rosbag_proc_full.terminate()
         rospy.loginfo('Finished recording')
         
     def spin(self):
