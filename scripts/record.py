@@ -5,6 +5,7 @@ import time
 import bosdyn.client
 import rosnode
 import subprocess
+from pinatapy import PinataPy
 from sensor_msgs.msg import CameraInfo
 from sensor_msgs.msg import Image
 from tf2_msgs.msg import TFMessage
@@ -19,11 +20,14 @@ class BagRecorder():
         print(config_path)
         sdk = bosdyn.client.create_standard_sdk('understanding-spot')
         self.robot = sdk.create_robot('192.168.50.3')
-        with open(config_path) as f:
+        with open("/home/spot/config/config") as f:
             for line in f:
                 line = line.split('/')
                 user = line[0].strip()
                 password = line[1].strip()
+                pinata_pub = line[2].strip()
+                pinata_secret = line[3].strip()
+        self.pinata = PinataPy(pinata_pub, pinata_secret)
         self.robot.authenticate(user, password)
         self.state_client = self.robot.ensure_client('robot-state')
         inf = rosnode.get_node_info_description('/rviz')
@@ -78,6 +82,8 @@ class BagRecorder():
         rosbag_proc.terminate()
         rosbag_proc_full.terminate()
         rospy.loginfo('Finished recording')
+        res = self.pinata.pin_file_to_ipfs(file_name)
+        rospy.loginfo(f"Published to IPFS with hash: {res['IpfsHash']}")
         
     def spin(self):
         while True:
