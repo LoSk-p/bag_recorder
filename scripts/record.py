@@ -32,11 +32,6 @@ class BagRecorder():
         self.state_client = self.robot.ensure_client('robot-state')
         inf = rosnode.get_node_info_description('/rviz')
         inf = inf.split()
-        print(inf)
-        date = time.strftime('%x')
-        date = date.split('/')
-        file_name_full = f'/home/spot/rosbags/lesson_one_full_{date[0]}_{date[1]}_{date[2]}_{time.time()}'
-        self.command_full = ['rosbag', 'record', f'--output-name={file_name_full}', '/spot/depth/back/camera_info', '/spot/depth/back/image', '/spot/depth/frontleft/camera_info', '/spot/depth/frontleft/image', '/spot/depth/frontright/camera_info', '/spot/depth/frontright/image', '/spot/depth/left/camera_info', '/spot/depth/left/image', '/spot/depth/right/camera_info', '/spot/depth/right/image', '/tf', '/tf_static', '/twist_marker_server/update']
         # self.topics_str = ''
         # types_name = []
         # topic = False
@@ -70,6 +65,8 @@ class BagRecorder():
         rospy.loginfo('Starting recorging')
         date = time.strftime('%x')
         date = date.split('/')
+        file_name_full = f'/home/spot/rosbags/lesson_one_full_{date[0]}_{date[1]}_{date[2]}_{time.time()}'
+        self.command_full = ['rosbag', 'record', f'--output-name={file_name_full}', '/spot/depth/back/camera_info', '/spot/depth/back/image', '/spot/depth/frontleft/camera_info', '/spot/depth/frontleft/image', '/spot/depth/frontright/camera_info', '/spot/depth/frontright/image', '/spot/depth/left/camera_info', '/spot/depth/left/image', '/spot/depth/right/camera_info', '/spot/depth/right/image', '/tf', '/tf_static', '/twist_marker_server/update']
         file_name = f'/home/spot/rosbags/lesson_one_{date[0]}_{date[1]}_{date[2]}_{time.time()}'
         self.command = ['rosbag', 'record', f'--output-name={file_name}', '/tf', '/tf_static']
         rosbag_proc = subprocess.Popen(self.command)
@@ -83,7 +80,7 @@ class BagRecorder():
         rosbag_proc_full.terminate()
         rospy.loginfo('Finished recording')
         time.sleep(2)
-        res = self.pinata.pin_file_to_ipfs(f'{file_name}.bag'')
+        res = self.pinata.pin_file_to_ipfs(f'{file_name}.bag')
         rospy.loginfo(f"Published to IPFS with hash: {res['IpfsHash']}")
         
     def spin(self):
